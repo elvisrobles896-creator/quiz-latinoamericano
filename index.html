@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Identidad y Cultura Latinoamericana</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body{
+      background: linear-gradient(135deg,#5a189a,#9d4edd,#ff8500);
+      min-height:100vh;
+      padding:20px;
+      color:white;
+    }
+
+    .container{
+      max-width:700px;
+      margin:auto;
+    }
+
+    .title{
+      text-align:center;
+      margin-bottom:20px;
+    }
+
+    .title h1{
+      font-size:2rem;
+      margin-bottom:10px;
+    }
+
+    .title p{
+      opacity:0.9;
+    }
+
+    .progress-container{
+      width:100%;
+      height:14px;
+      background:rgba(255,255,255,0.2);
+      border-radius:20px;
+      overflow:hidden;
+      margin-bottom:25px;
+      backdrop-filter: blur(5px);
+    }
+
+    .progress-bar{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,#ffd60a,#ff8500);
+      transition:0.3s;
+    }
+
+    .card{
+      background:rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      border-radius:25px;
+      padding:22px;
+      margin-bottom:20px;
+      box-shadow:0 8px 25px rgba(0,0,0,0.25);
+      border:1px solid rgba(255,255,255,0.2);
+      animation:fade 0.5s ease;
+    }
+
+    @keyframes fade{
+      from{
+        opacity:0;
+        transform:translateY(10px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
+    .question{
+      font-size:1.1rem;
+      margin-bottom:18px;
+      font-weight:600;
+      line-height:1.5;
+    }
+
+    .option{
+      background:rgba(255,255,255,0.15);
+      border:none;
+      width:100%;
+      padding:15px;
+      margin:8px 0;
+      border-radius:16px;
+      color:white;
+      text-align:left;
+      cursor:pointer;
+      transition:0.25s;
+      font-size:0.95rem;
+      font-weight:500;
+    }
+
+    .option:hover{
+      transform:scale(1.02);
+      background:rgba(255,255,255,0.25);
+    }
+
+    .correct{
+      background:#38b000 !important;
+    }
+
+    .wrong{
+      background:#d00000 !important;
+    }
+
+    .next-btn{
+      width:100%;
+      padding:16px;
+      border:none;
+      border-radius:18px;
+      margin-top:18px;
+      background:linear-gradient(90deg,#ffbe0b,#fb5607);
+      color:white;
+      font-size:1rem;
+      font-weight:bold;
+      cursor:pointer;
+      display:none;
+      box-shadow:0 5px 15px rgba(0,0,0,0.25);
+      transition:0.25s;
+    }
+
+    .next-btn:hover{
+      transform:translateY(-2px);
+    }
+
+    .result{
+      display:none;
+      text-align:center;
+      padding:30px;
+      background:rgba(255,255,255,0.12);
+      border-radius:25px;
+      backdrop-filter:blur(10px);
+      box-shadow:0 8px 25px rgba(0,0,0,0.25);
+    }
+
+    .result h2{
+      font-size:2rem;
+      margin-bottom:10px;
+    }
+
+    .score{
+      font-size:3rem;
+      font-weight:bold;
+      color:#ffd60a;
+      margin:20px 0;
+    }
+
+    .restart{
+      padding:15px 25px;
+      border:none;
+      border-radius:18px;
+      background:linear-gradient(90deg,#ff006e,#8338ec);
+      color:white;
+      font-size:1rem;
+      cursor:pointer;
+      font-weight:bold;
+      margin-top:15px;
+    }
+
+    @media(max-width:600px){
+      .title h1{
+        font-size:1.6rem;
+      }
+
+      .card{
+        padding:18px;
+      }
+
+      .question{
+        font-size:1rem;
+      }
+
+      .option{
+        font-size:0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="title">
+    <h1>🌎 Identidad y Cultura Latinoamericana</h1>
+    <p>Cuestionario interactivo</p>
+  </div>
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="card" id="quizCard">
+    <div class="question" id="question"></div>
+    <div id="options"></div>
+
+    <button class="next-btn" id="nextBtn">
+      Siguiente ➜
+    </button>
+  </div>
+
+  <div class="result" id="result">
+    <h2>🎉 Resultado Final</h2>
+    <div class="score" id="score"></div>
+    <p id="message"></p>
+
+    <button class="restart" onclick="location.reload()">
+      Volver a intentar
+    </button>
+  </div>
+
+</div>
+
+<script>
+const quiz = [
+{
+question:"1. Según el texto, ¿cuál fue la base necesaria para que el colonialismo pudiera transformar la identidad de los pueblos originarios?",
+options:[
+"a) El desarrollo tecnológico.",
+"b) La dominación cultural.",
+"c) El comercio internacional.",
+"d) La diplomacia pacífica."
+],
+answer:"b) La dominación cultural."
+},
+
+{
+question:"2. ¿Qué elemento permitió que la cultura y sabiduría ancestral permanecieran en la memoria del pueblo a pesar de la violencia colonial?",
+options:[
+"a) Los registros escritos en latín.",
+"b) La tradición oral.",
+"c) La arquitectura moderna.",
+"d) Las leyes impuestas por los colonizadores."
+],
+answer:"b) La tradición oral."
+},
+
+{
+question:"3. Desde el enfoque antropológico, las identidades se definen como:",
+options:[
+"a) Cualidades perennes e inmutables.",
+"b) Rasgos determinados únicamente por la genética.",
+"c) Construcciones simbólicas plurales y cambiantes.",
+"d) Elementos que no se relacionan con las prácticas sociales."
+],
+answer:"c) Construcciones simbólicas plurales y cambiantes."
+},
+
+{
+question:"4. ¿Qué propone la filosofía latinoamericana frente al modelo de la 'pseudocultura' colonial?",
+options:[
+"a) Adoptar las costumbres europeas para progresar.",
+"b) Reconocer una identidad propia, auténtica y real.",
+"c) Ignorar el pasado para enfocarse solo en el futuro.",
+"d) Eliminar el mestizaje cultural por completo."
+],
+answer:"b) Reconocer una identidad propia, auténtica y real."
+},
+
+{
+question:"5. ¿Cuál es el núcleo central de la identidad latinoamericana según el texto?",
+options:[
+"a) La homogeneidad de pensamiento.",
+"b) La diversidad cultural.",
+"c) La herencia exclusivamente española.",
+"d) El aislamiento de otras culturas."
+],
+answer:"b) La diversidad cultural."
+},
+
+{
+question:"6. ¿Cómo ha sido tratada históricamente la identidad cultural latinoamericana por el discurso dominante occidental?",
+options:[
+"a) Como un modelo de racionalidad a seguir.",
+"b) Como algo exótico, distinto y salvaje.",
+"c) Como la base del pensamiento universal.",
+"d) Como una cultura superior en tecnología."
+],
+answer:"b) Como algo exótico, distinto y salvaje."
+},
+
+{
+question:"7. Según José Martí, ¿qué riesgo existe actualmente en el mundo globalizado?",
+options:[
+"a) El exceso de diversidad cultural.",
+"b) La homogeneización cultural a favor de un solo mundo y una sola economía.",
+"c) El fin de la tecnología moderna.",
+"d) La falta de medios de comunicación."
+],
+answer:"b) La homogeneización cultural a favor de un solo mundo y una sola economía."
+},
+
+{
+question:"8. ¿Bajo qué términos se ha categorizado históricamente a los saberes ancestrales de América?",
+options:[
+"a) Lógicos y científicos.",
+"b) Irracionales y míticos.",
+"c) Universales y absolutos.",
+"d) Modernos y vanguardistas."
+],
+answer:"b) Irracionales y míticos."
+},
+
+{
+question:"9. En el pensamiento andino, ¿en qué consiste el principio de 'Correspondencia'?",
+options:[
+"a) En que cada persona debe vivir aislada de la naturaleza.",
+"b) En una armonía cósmica entre el ser humano y la naturaleza.",
+"c) En la superioridad del hombre sobre la Luna y el Sol.",
+"d) En la competencia entre los elementos del universo."
+],
+answer:"b) En una armonía cósmica entre el ser humano y la naturaleza."
+},
+
+{
+question:"10. ¿Qué significa el principio de 'Reciprocidad' en la sabiduría andina?",
+options:[
+"a) Que cada acto y pensamiento tiene su respuesta en el universo; todo es recíproco.",
+"b) Que el ser humano no le debe nada a su entorno.",
+"c) Que solo se debe dar sin esperar recibir nada a cambio.",
+"d) Que la naturaleza es un recurso para explotar sin límites."
+],
+answer:"a) Que cada acto y pensamiento tiene su respuesta en el universo; todo es recíproco."
+},
+
+{
+question:"11. ¿Cuál es uno de los principios fundamentales de la interculturalidad?",
+options:[
+"a) La imposición de una cultura dominante sobre las demás.",
+"b) La interacción respetuosa y tolerante frente a todos los grupos culturales.",
+"c) La creación de una cultura única para todo el mundo.",
+"d) El aislamiento total entre diferentes pueblos."
+],
+answer:"b) La interacción respetuosa y tolerante frente a todos los grupos culturales."
+},
+
+{
+question:"12. Según el texto, la interculturalidad busca formar:",
+options:[
+"a) Una amalgama deforme y desordenada de culturas.",
+"b) Una unidad en la diversidad.",
+"c) Un pensamiento único y universal.",
+"d) Una jerarquía donde una cultura sea superior a otra."
+],
+answer:"b) Una unidad en la diversidad."
+},
+
+{
+question:"13. ¿Cómo se define la 'multiculturalidad' a diferencia de la interculturalidad?",
+options:[
+"a) Como el diálogo profundo entre diferentes grupos.",
+"b) Como la coexistencia de diferentes grupos en un espacio sin diálogo necesariamente.",
+"c) Como la eliminación de las diferencias étnicas.",
+"d) Como un sistema legal que prohíbe el racismo."
+],
+answer:"b) Como la coexistencia de diferentes grupos en un espacio sin diálogo necesariamente."
+},
+
+{
+question:"14. ¿Qué fenómenos negativos pueden aparecer en espacios multiculturales sin diálogo cultural?",
+options:[
+"a) Cooperación y solidaridad extrema.",
+"b) Etnocentrismo, racismo y segregación.",
+"c) Desarrollo tecnológico acelerado.",
+"d) Unificación de todas las religiones."
+],
+answer:"b) Etnocentrismo, racismo y segregación."
+},
+
+{
+question:"15. Según la filosofía latinoamericana, ¿cuál es la respuesta a '¿quiénes somos los latinoamericanos?'",
+options:[
+"a) Un pueblo que ya ha terminado su desarrollo.",
+"b) Un 'nosotros' complejo, múltiple y diverso.",
+"c) Una copia exacta de la cultura europea.",
+"d) Una sociedad sin pasado ni tradiciones."
+],
+answer:"b) Un 'nosotros' complejo, múltiple y diverso."
+}
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+const nextBtn = document.getElementById("nextBtn");
+const progressBar = document.getElementById("progressBar");
+
+function loadQuestion(){
+
+  const current = quiz[currentQuestion];
+
+  questionEl.textContent = current.question;
+
+  optionsEl.innerHTML = "";
+
+  current.options.forEach(option=>{
+
+    const button = document.createElement("button");
+
+    button.classList.add("option");
+
+    button.textContent = option;
+
+    button.onclick = ()=>selectAnswer(button, current.answer);
+
+    optionsEl.appendChild(button);
+  });
+
+  progressBar.style.width = ((currentQuestion)/quiz.length)*100 + "%";
+}
+
+function selectAnswer(button, correctAnswer){
+
+  const buttons = document.querySelectorAll(".option");
+
+  buttons.forEach(btn=>{
+
+    btn.disabled = true;
+
+    if(btn.textContent === correctAnswer){
+      btn.classList.add("correct");
+    }
+  });
+
+  if(button.textContent === correctAnswer){
+    score++;
+  }else{
+    button.classList.add("wrong");
+  }
+
+  nextBtn.style.display = "block";
+}
+
+nextBtn.onclick = ()=>{
+
+  currentQuestion++;
+
+  if(currentQuestion < quiz.length){
+
+    loadQuestion();
+
+    nextBtn.style.display = "none";
+
+  }else{
+    showResult();
+  }
+}
+
+function showResult(){
+
+  document.getElementById("quizCard").style.display = "none";
+
+  document.getElementById("result").style.display = "block";
+
+  progressBar.style.width = "100%";
+
+  document.getElementById("score").textContent =
+  score + " / " + quiz.length;
+
+  let message = "";
+
+  if(score === 15){
+    message = "🏆 ¡Perfecto! Conoces muy bien la identidad latinoamericana.";
+  }else if(score >= 10){
+    message = "🔥 ¡Muy buen resultado!";
+  }else if(score >= 6){
+    message = "✨ Nada mal, pero puedes mejorar.";
+  }else{
+    message = "📚 Sigue practicando y vuelve a intentarlo.";
+  }
+
+  document.getElementById("message").textContent = message;
+}
+
+loadQuestion();
+</script>
+
+</body>
+  </html>
